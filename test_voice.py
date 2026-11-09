@@ -42,10 +42,14 @@ def test_voice():
     silence_start = None
     speech_start_time = None
 
+    # 3.0x digital software gain
+    SOFTWARE_GAIN = 3.0
+
     def audio_callback(indata, frames, time_info, status):
         if is_running:
+            boosted = (indata.flatten() * SOFTWARE_GAIN).clip(-1.0, 1.0)
             with buffer_lock:
-                audio_buffer.extend(indata.flatten().tolist())
+                audio_buffer.extend(boosted.tolist())
 
     print(f"\n[READY] Speak full phrases into '{mic_name}':")
     print("  👉 Say: 'open notepad' (or simply 'notepad')")
@@ -76,13 +80,22 @@ def test_voice():
                 rms = float(np.sqrt(np.mean(recent_chunk**2)))
                 now = time.time()
 
+                # Dynamic Ambient Noise Floor Tracking
+                ambient_floor = getattr(test_voice, 'ambient_floor', 0.0008)
+                if not is_speaking:
+                    ambient_floor = ambient_floor * 0.92 + rms * 0.08
+                test_voice.ambient_floor = ambient_floor
+
+                # Adaptive Speech Threshold
+                speech_thresh = max(0.0015, ambient_floor * 2.0)
+
                 bar_len = min(25, int(rms * 1500))
                 bar = "█" * bar_len + "░" * (25 - bar_len)
                 status_lbl = "Speaking..." if is_speaking else "Listening..."
                 print(f"  [{bar}] Signal: {rms*1000:.1f} | {status_lbl}", end='\r', flush=True)
 
                 # Voice Activity Detection
-                if rms > 0.0025:
+                if rms > speech_thresh:
                     if not is_speaking:
                         is_speaking = True
                         speech_start_time = now
@@ -90,8 +103,8 @@ def test_voice():
                 elif is_speaking:
                     if silence_start is None:
                         silence_start = now
-                    # Wait for 0.65s silence pause before cutting the audio!
-                    elif (now - silence_start > 0.65) or (now - speech_start_time > 4.0):
+                    # Snappy 0.45s silence pause
+                    elif (now - silence_start > 0.45) or (now - speech_start_time > 4.0):
                         with buffer_lock:
                             full_phrase = np.array(audio_buffer, dtype=np.float32)
                             audio_buffer.clear()
@@ -100,12 +113,12 @@ def test_voice():
                         silence_start = None
                         speech_start_time = None
 
-                        if len(full_phrase) > int(sample_rate * 0.3):
+                        if len(full_phrase) > int(sample_rate * 0.25):
                             print("\n[TRANSCRIBING FULL PHRASE]...")
                             segments, _ = model.transcribe(
                                 full_phrase,
                                 initial_prompt=COMMAND_PROMPT,
-                                vad_filter=True,
+                                vad_filter=False,
                                 language="en",
                                 beam_size=1
                             )

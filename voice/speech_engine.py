@@ -91,14 +91,8 @@ class VoiceIntentEngine:
                         content = content.replace(p_word, p_symbol)
 
                     print(f"  -> Executing: Typing into active window: '{content}'")
-                    try:
-                        import pyperclip
-                        pyperclip.copy(content + " ")
-                        if pyautogui:
-                            pyautogui.hotkey('ctrl', 'v')
-                    except Exception:
-                        if pyautogui:
-                            pyautogui.write(content + " ", interval=0.01)
+                    if pyautogui:
+                        pyautogui.write(content + " ", interval=0.005)
                     return {'status': 'success', 'message': f'Typed: "{content}"'}
 
         # 0.1 Multimodal Fusion: Voice Mouse & Cursor Actions (Point + Speak)

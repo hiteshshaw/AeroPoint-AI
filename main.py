@@ -232,9 +232,18 @@ def run_assistant():
                 cv2.putText(debug_frame, f"Gesture: {status_text}", (20, 35),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
-                voice_msg = voice_listener.latest_heard if voice_listener.latest_heard else "Listening..."
-                cv2.putText(debug_frame, f"Voice: {voice_msg}", (20, 65),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 200, 0), 2)
+                if getattr(voice_listener, 'is_speaking', False):
+                    voice_msg = "Voice: [HEARING YOU SPEAK...]"
+                    voice_color = (0, 255, 255)
+                elif voice_listener.latest_heard:
+                    voice_msg = f"Voice: '{voice_listener.latest_heard}'"
+                    voice_color = (0, 255, 0)
+                else:
+                    voice_msg = "Voice: Ready (Speak into mic)"
+                    voice_color = (255, 200, 0)
+
+                cv2.putText(debug_frame, voice_msg, (20, 65),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, voice_color, 2)
 
                 cv2.imshow("On-Device Assistant", debug_frame)
 
