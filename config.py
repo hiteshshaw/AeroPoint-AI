@@ -22,6 +22,12 @@ DRAG_HOLD_TIME_SEC = 0.4 # Hold pinch longer than this to start dragging
 SCROLL_SPEED = 20
 ACTIVE_ZONE_MARGIN = 0.12 # Relaxed hand box: no need to stretch hand to camera edge
 
+# Accessibility: Dwell Click (Hover-to-Click for Tremor/Motor Impairment)
+ENABLE_DWELL_CLICK = True
+DWELL_TIME_SEC = 1.0     # Time in seconds holding pointer still before auto-clicking
+DWELL_RADIUS_NORM = 0.03 # Normalized motion tolerance window for tremor filtering
+DWELL_COOLDOWN_SEC = 1.2 # Cooldown after dwell click before another dwell click can fire
+
 # Power Management
 AUTO_SLEEP_TIMEOUT_SEC = 10  # Seconds of inactivity before sleeping camera
 AUDIO_ENERGY_THRESHOLD = 300 # Audio activity trigger threshold

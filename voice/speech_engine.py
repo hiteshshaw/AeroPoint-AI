@@ -101,6 +101,55 @@ class VoiceIntentEngine:
                             pyautogui.write(content + " ", interval=0.01)
                     return {'status': 'success', 'message': f'Typed: "{content}"'}
 
+        # 0.1 Multimodal Fusion: Voice Mouse & Cursor Actions (Point + Speak)
+        if text in ['click', 'left click', 'tap', 'press']:
+            print("  -> 🎯 [MULTIMODAL FUSION]: Voice Left Click at cursor position...")
+            if self.sys:
+                self.sys.click('left')
+            return {'status': 'success', 'message': 'Voice Left Click'}
+
+        if text in ['double click', 'open this']:
+            print("  -> 🎯 [MULTIMODAL FUSION]: Voice Double Click at cursor position...")
+            if self.sys:
+                self.sys.double_click()
+            return {'status': 'success', 'message': 'Voice Double Click'}
+
+        if text in ['right click', 'context menu']:
+            print("  -> 🎯 [MULTIMODAL FUSION]: Voice Right Click at cursor position...")
+            if self.sys:
+                self.sys.click('right')
+            return {'status': 'success', 'message': 'Voice Right Click'}
+
+        if text in ['drag', 'drag this', 'hold mouse']:
+            print("  -> 🎯 [MULTIMODAL FUSION]: Voice Drag (Mouse Down)...")
+            if self.sys:
+                self.sys.mouse_down('left')
+            return {'status': 'success', 'message': 'Dragging started'}
+
+        if text in ['drop', 'release', 'release mouse', 'drop here']:
+            print("  -> 🎯 [MULTIMODAL FUSION]: Voice Drop (Mouse Up)...")
+            if self.sys:
+                self.sys.mouse_up('left')
+            return {'status': 'success', 'message': 'Released drop'}
+
+        if text in ['scroll down', 'page down']:
+            print("  -> 🎯 [MULTIMODAL FUSION]: Voice Scroll Down...")
+            if self.sys:
+                self.sys.scroll(-500)
+            return {'status': 'success', 'message': 'Scrolled down'}
+
+        if text in ['scroll up', 'page up']:
+            print("  -> 🎯 [MULTIMODAL FUSION]: Voice Scroll Up...")
+            if self.sys:
+                self.sys.scroll(500)
+            return {'status': 'success', 'message': 'Scrolled up'}
+
+        if text in ['maximize', 'maximize window', 'full screen']:
+            print("  -> Executing: Maximize Window (Win+Up)...")
+            if pyautogui:
+                pyautogui.hotkey('win', 'up')
+            return {'status': 'success', 'message': 'Maximized window'}
+
         # Keyboard editing keys
         if text in ['press enter', 'new line', 'enter']:
             print("  -> Executing: Enter key...")

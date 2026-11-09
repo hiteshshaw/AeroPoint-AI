@@ -24,13 +24,13 @@ Controlling a personal computer should not be restricted to mechanical keyboards
 ```
 
 #### 1.2 Target Personas & Scenarios
-1. **Permanent Physical Disabilities (Motor Impairments, ALS, Cerebral Palsy):**
-   * *Challenge:* Inability to grip a mouse or sustain arm elevation.
-   * *Solution:* 480p optical hand tracking with Kalman tremor dampening; relaxed central active box requiring only micro-movements of fingers.
+1. **Permanent Physical Disabilities (Motor Impairments, ALS, Cerebral Palsy, Parkinson's):**
+   * *Challenge:* Inability to grip a mouse, sustain arm elevation, or execute finger pinch gestures.
+   * *Solution:* 480p optical hand tracking with Kalman tremor dampening; relaxed central active box requiring only micro-movements of fingers; **WCAG AAA Dwell-Click Engine** (hovering 1.0s executes click without pinch); and **Multimodal Fusion** (pointing at target while speaking *"Click"* or *"Double Click"*).
 2. **Temporary Limitations (RSI, Wrist Fractures):**
    * *Challenge:* Dominant hand immobilized; slow typing with non-dominant hand.
    * *Solution:* Hands-free voice dictation with automated disfluency removal and list formatting.
-3. **Situational Limitations (Sterile Environments, Lab Work, Cooking):**
+3. **Situational Limitations (Sterile Environments, Lab Work, Surgery OT, Cooking):**
    * *Challenge:* Hands are gloved, wet, or sterile; touching physical peripherals causes contamination.
    * *Solution:* Non-contact lateral palm swipes to advance presentations or documents; verbal execution of application launches.
 4. **Speech & Neurodivergent Needs (Dysarthria, Cognitive Fatigue):**

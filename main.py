@@ -5,6 +5,7 @@ Ultra-low CPU & Battery-Optimized Architecture
 import cv2
 import time
 import sys
+import math
 import threading
 
 import config
@@ -53,6 +54,13 @@ def run_assistant():
     is_dragging = False
     click_cooldown = 0.35  # Prevent accidental double clicks
 
+    # Accessibility: Dwell Click (Hover-to-Click) State Variables
+    dwell_anchor_x = None
+    dwell_anchor_y = None
+    dwell_start_time = None
+    last_dwell_click_time = 0
+    dwell_progress = 0.0
+
     prev_scroll_y = None
     show_window = True
 
@@ -90,7 +98,35 @@ def run_assistant():
                     pinch_start_time = None
                     prev_scroll_y = None
 
+                    # Accessibility: Dwell Click (Hover-to-Click for Motor Tremor/Parkinson's)
+                    if getattr(config, 'ENABLE_DWELL_CLICK', True):
+                        if dwell_anchor_x is None:
+                            dwell_anchor_x, dwell_anchor_y = norm_x, norm_y
+                            dwell_start_time = current_time
+                            dwell_progress = 0.0
+                        else:
+                            dist = math.hypot(norm_x - dwell_anchor_x, norm_y - dwell_anchor_y)
+                            if dist > getattr(config, 'DWELL_RADIUS_NORM', 0.03):
+                                dwell_anchor_x, dwell_anchor_y = norm_x, norm_y
+                                dwell_start_time = current_time
+                                dwell_progress = 0.0
+                            else:
+                                elapsed = current_time - dwell_start_time
+                                dwell_target = getattr(config, 'DWELL_TIME_SEC', 1.0)
+                                dwell_progress = min(1.0, elapsed / dwell_target)
+                                if current_time - last_dwell_click_time > getattr(config, 'DWELL_COOLDOWN_SEC', 1.2):
+                                    if dwell_progress >= 1.0:
+                                        sys_ctrl.click('left')
+                                        last_dwell_click_time = current_time
+                                        status_text = "🎯 DWELL CLICK!"
+                                        dwell_anchor_x = None
+                                        dwell_start_time = None
+                                        dwell_progress = 0.0
+                                    else:
+                                        status_text = f"Dwell Hover ({int(dwell_progress * 100)}%)"
+
                 elif action == 'CLICK':
+                    dwell_anchor_x, dwell_anchor_y, dwell_start_time, dwell_progress = None, None, None, 0.0
                     norm_x, norm_y = gesture.get('norm_x', 0.5), gesture.get('norm_y', 0.5)
                     sys_ctrl.move_cursor(norm_x, norm_y, smoothing=config.SMOOTHING_FACTOR)
 
@@ -109,6 +145,7 @@ def run_assistant():
                     prev_scroll_y = None
 
                 elif action == 'RIGHT_CLICK':
+                    dwell_anchor_x, dwell_anchor_y, dwell_start_time, dwell_progress = None, None, None, 0.0
                     status_text = "Right Click"
                     if current_time - last_click_time > click_cooldown:
                         sys_ctrl.click('right')
@@ -117,6 +154,7 @@ def run_assistant():
                     prev_scroll_y = None
 
                 elif action == 'SCROLL_MODE':
+                    dwell_anchor_x, dwell_anchor_y, dwell_start_time, dwell_progress = None, None, None, 0.0
                     status_text = "Scrolling"
                     curr_y = gesture['y']
                     if prev_scroll_y is not None:
@@ -128,18 +166,21 @@ def run_assistant():
                     pinch_start_time = None
 
                 elif action == 'SWIPE_RIGHT':
+                    dwell_anchor_x, dwell_anchor_y, dwell_start_time, dwell_progress = None, None, None, 0.0
                     status_text = "Swipe Right (Next Slide)"
                     sys_ctrl.press_key('right')
                     pinch_start_time = None
                     prev_scroll_y = None
 
                 elif action == 'SWIPE_LEFT':
+                    dwell_anchor_x, dwell_anchor_y, dwell_start_time, dwell_progress = None, None, None, 0.0
                     status_text = "Swipe Left (Prev Slide)"
                     sys_ctrl.press_key('left')
                     pinch_start_time = None
                     prev_scroll_y = None
 
                 elif action == 'OPEN_PALM':
+                    dwell_anchor_x, dwell_anchor_y, dwell_start_time, dwell_progress = None, None, None, 0.0
                     status_text = f"Volume: {int(gesture['volume_level'] * 100)}%"
                     sys_ctrl.set_volume(gesture['volume_level'])
                     if is_dragging:
@@ -149,6 +190,7 @@ def run_assistant():
                     prev_scroll_y = None
 
                 elif action == 'FIST':
+                    dwell_anchor_x, dwell_anchor_y, dwell_start_time, dwell_progress = None, None, None, 0.0
                     status_text = "Paused (Fist)"
                     if is_dragging:
                         sys_ctrl.mouse_up('left')
@@ -156,6 +198,7 @@ def run_assistant():
                     pinch_start_time = None
                     prev_scroll_y = None
             else:
+                dwell_anchor_x, dwell_anchor_y, dwell_start_time, dwell_progress = None, None, None, 0.0
                 if is_dragging:
                     sys_ctrl.mouse_up('left')
                     is_dragging = False
@@ -175,6 +218,16 @@ def run_assistant():
 
             # Display HUD on Camera Window
             if show_window:
+                # Render Dwell Progress Ring if user is hovering
+                if dwell_progress > 0.0 and dwell_anchor_x is not None:
+                    cx = int(dwell_anchor_x * config.CAMERA_WIDTH)
+                    cy = int(dwell_anchor_y * config.CAMERA_HEIGHT)
+                    # Outer guide circle
+                    cv2.circle(debug_frame, (cx, cy), 22, (80, 80, 80), 2)
+                    # Progress arc
+                    end_angle = int(dwell_progress * 360)
+                    cv2.ellipse(debug_frame, (cx, cy), (22, 22), 0, -90, -90 + end_angle, (0, 255, 255), 3)
+
                 cv2.putText(debug_frame, f"Gesture: {status_text}", (20, 35),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 

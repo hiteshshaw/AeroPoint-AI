@@ -20,9 +20,13 @@ Unlike generic academic tutorials or cloud-dependent wrappers, AeroPoint incorpo
    * Eliminates the catastrophic word-splitting flaw common in standard VAD models. If a user pauses naturally (*"Open... [1.2s pause] ...Notepad"*), a temporal memory buffer dynamically stitches the tokens into a unified command execution.
 2. **Central Active-Zone Coordinate Remapper (`controller/os_actions.py`):**
    * Eliminates shoulder and trapezius fatigue by mathematically mapping a central 76% optical bounding box ($[0.12, 0.88]$ normalized space) to the complete 100% desktop raster, allowing micro-finger pointing to reach screen corners effortlessly.
-3. **Hardware-Aware Audio Endpoint Binding (`voice/whisper_listener.py`):**
+3. **WCAG AAA Dwell Click Engine (`main.py`):**
+   * Built specifically for users with severe motor tremors, Parkinson's disease, or cerebral palsy who cannot execute a pinch. Hovering the pointer still within a tremor-tolerance zone for 1.0s triggers an auto-click, visualized with a real-time charging progress arc on the HUD.
+4. **Multimodal Fusion Engine (Point + Speak in `voice/speech_engine.py`):**
+   * Enables true simultaneous multimodal interaction: point the index finger at any screen target and say *"Click"*, *"Double Click"*, *"Right Click"*, or *"Drag this"* for effortless hands-free productivity.
+5. **Hardware-Aware Audio Endpoint Binding (`voice/whisper_listener.py`):**
    * Actively probes multi-channel Windows audio endpoints, discriminating between muted hardware arrays (e.g., internal Realtek arrays at flat 0.00006 amplitude) and active Bluetooth hands-free endpoints (boAt Rockerz 411 at 0.17139 peak), preventing dead-mic starvation.
-4. **Dynamic Battery Throttling State Machine (`main.py`):**
+6. **Dynamic Battery Throttling State Machine (`main.py`):**
    * Throttles optical frame rates from 25 FPS (active) down to 5 FPS after 8 seconds of hand absence, keeping CPU package power under 1.8W active and 0.13W idle.
 
 ---
@@ -48,6 +52,7 @@ Unlike generic academic tutorials or cloud-dependent wrappers, AeroPoint incorpo
 | Gesture | Physical Motion | Desktop Response |
 | :--- | :--- | :--- |
 | ☝️ **Index Pointer** | Single extended index finger | Smooth jitter-free cursor tracking (EMA filter) |
+| 🎯 **Dwell Click (Accessibility)** | Hold pointer still for 1.0s | **Auto-Click on Hover** (for tremor/motor disability) |
 | 🤏 **Quick Pinch** | Thumb + Index contact (<0.05 norm) | Immediate Left Click |
 | 🤏 **Sustained Pinch** | Thumb + Index hold (>0.4s) | **Drag & Drop** (Windows, files, sliders) |
 | 🤏 **Middle Pinch** | Thumb + Middle finger contact | Contextual Right Click |
@@ -58,6 +63,7 @@ Unlike generic academic tutorials or cloud-dependent wrappers, AeroPoint incorpo
 | ✊ **Closed Fist** | Clenched fist gesture | Pause tracking / Enter battery-saver idle |
 
 ### 🎙️ Offline Voice Commands & Dictation
+* **🎯 Multimodal Fusion (Point + Speak):** Point at any element and say *"Click"*, *"Double Click"*, *"Right Click"*, *"Drag"*, *"Drop"*, *"Scroll Down"*, or *"Maximize"*.
 * **Application Launching:** *"Open Notepad"*, *"Open Calculator"*, *"Open Chrome"*, *"Open YouTube"*, *"Settings"*. *(Supports direct keyword launching without saying "Open")*.
 * **Voice Dictation with Smart Punctuation:** *"Type hello world comma meeting starts at five full stop"* ➔ `hello world, meeting starts at five.`
 * **Editing Directives:** *"Enter"*, *"New Line"*, *"Backspace"*, *"Select All"*, *"Save File"*.

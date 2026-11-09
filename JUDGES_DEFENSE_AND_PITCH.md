@@ -50,10 +50,11 @@ This document prepares you for tough cross-examination from technical judges, ac
 
 #### Q6: "What happens if a user with Parkinson's has hand tremors? Won't that cause accidental clicks?"
 * **Winning Answer:**
-  > *"We implemented a 3-layer stabilization pipeline:
-  > 1. **Kalman Trajectory Filter:** Filters out high-frequency involuntary tremor oscillations while preserving intentional directional momentum.
+  > *"We implemented a 4-layer stabilization and accessibility pipeline:
+  > 1. **Kalman Trajectory Filter & EMA Smoothing:** Filters out high-frequency involuntary tremor oscillations ($>4\text{ Hz}$) while preserving intentional directional momentum.
   > 2. **Pinch Hysteresis:** Engaging a click requires distance $\le 0.045$, while releasing requires $\ge 0.075$, eliminating contact bounce.
-  > 3. **Spasm Jerk Filter:** Rapid involuntary limb spikes (>2.5 screen units/sec) automatically freeze click generation."*
+  > 3. **WCAG AAA Dwell Click:** For users who cannot pinch due to spasticity or joint weakness, holding the pointer over any button for 1.0s auto-triggers a click with an animated visual progress ring.
+  > 4. **Multimodal Fusion (Point + Speak):** Users can simply point towards a target and say *'Click'* or *'Double Click'*—zero finger contraction required."*
 
 ---
 
