@@ -225,3 +225,4 @@ Phase 3 (Weeks 15 - 22) ──► Florence-2 screen perception + Kalman tremor f
 #### Participatory Co-Design Panel:
 * 30-person user panel comprising motor-disabled, dysarthric, low-vision, and situational users.
 * Quantitative success metrics: Task Completion Rate $>92\%$, Mean Time to Recover from error $<3.5\text{ s}$, Physical exertion reduction $>60\%$.
+

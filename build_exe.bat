@@ -23,3 +23,4 @@ echo [3/3] Build finished!
 echo Output executable is located in: dist\GestureAssistant\GestureAssistant.exe
 echo ======================================================================
 pause
+

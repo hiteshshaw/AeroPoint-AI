@@ -88,3 +88,4 @@ This document prepares you for tough cross-examination from technical judges, ac
 • Empowers motor-disabled, post-stroke, RSI, and sterile situational users.
 • 1-Click Installation (`install.bat`) for immediate open-source adoption.
 ```
+
