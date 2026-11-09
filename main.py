@@ -81,6 +81,7 @@ def run_assistant():
 
             current_time = time.time()
             status_text = "Idle (Battery Saver)"
+            gesture = {'action': 'NONE'}
 
             if hands:
                 last_hand_time = current_time
