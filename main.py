@@ -76,11 +76,16 @@ def run_assistant():
             # Mirror frame for natural gesture control
             frame = cv2.flip(frame, 1)
 
-            # Process Hand Landmarks
-            debug_frame, hands = tracker.process_frame(frame)
+            # Process Hand Landmarks (if enabled in active profile)
+            if getattr(config, 'CAMERA_ENABLED', True):
+                debug_frame, hands = tracker.process_frame(frame)
+            else:
+                debug_frame = frame
+                hands = []
+                time.sleep(1.0 / config.IDLE_FPS)
 
             current_time = time.time()
-            status_text = "Idle (Battery Saver)"
+            status_text = "Idle (Battery Saver)" if getattr(config, 'CAMERA_ENABLED', True) else "Hands-Busy (Voice Only)"
             gesture = {'action': 'NONE'}
 
             if hands:
@@ -244,6 +249,9 @@ def run_assistant():
 
                 cv2.putText(debug_frame, voice_msg, (20, 65),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.6, voice_color, 2)
+
+                cv2.putText(debug_frame, f"Profile: {getattr(config, 'ACTIVE_PROFILE', 'DEFAULT')}", (20, 92),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (220, 220, 255), 1)
 
                 cv2.imshow("On-Device Assistant", debug_frame)
 

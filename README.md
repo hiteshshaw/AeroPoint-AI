@@ -28,6 +28,12 @@ Unlike generic academic tutorials or cloud-dependent wrappers, AeroPoint incorpo
    * Actively probes multi-channel Windows audio endpoints, discriminating between muted hardware arrays (e.g., internal Realtek arrays at flat 0.00006 amplitude) and active Bluetooth hands-free endpoints (boAt Rockerz 411 at 0.17139 peak), preventing dead-mic starvation.
 6. **Dynamic Battery Throttling State Machine (`main.py`):**
    * Throttles optical frame rates from 25 FPS (active) down to 5 FPS after 8 seconds of hand absence, keeping CPU package power under 1.8W active and 0.13W idle.
+7. **Adaptive Access Profiles (`config.py` & `voice/speech_engine.py`):**
+   * Dynamically switches between 4 on-device profiles via voice or HUD:
+     * **Motor Support Profile:** 1.2s dwell click, 40% wider tremor tolerance, verbal confirmation.
+     * **Hands-Busy Profile:** Pauses vision to save battery, 100% voice-first control for cooking/lab.
+     * **Low-Fatigue Profile:** Constrained 65% central box for RSI / carpal tunnel recovery.
+     * **Sterile Environment Profile:** 100% touchless lateral swipes & dictation for surgery cleanrooms.
 
 ---
 

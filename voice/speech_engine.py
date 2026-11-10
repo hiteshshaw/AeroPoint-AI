@@ -275,5 +275,31 @@ class VoiceIntentEngine:
             os.system('rundll32.exe user32.dll,LockWorkStation')
             return {'status': 'success', 'message': 'Locking screen'}
 
+        # 8. Access Profiles: Dynamic Voice Switching
+        if any(w in text for w in ['profile motor', 'motor support mode', 'mode motor']):
+            import config
+            config.apply_profile('MOTOR_SUPPORT')
+            return {'status': 'success', 'message': 'Switched to Motor Support Profile'}
+
+        if any(w in text for w in ['profile hands busy', 'hands busy mode', 'voice only mode', 'voice mode']):
+            import config
+            config.apply_profile('HANDS_BUSY')
+            return {'status': 'success', 'message': 'Switched to Hands-Busy (Voice-Only) Profile'}
+
+        if any(w in text for w in ['profile low fatigue', 'low fatigue mode', 'fatigue mode']):
+            import config
+            config.apply_profile('LOW_FATIGUE')
+            return {'status': 'success', 'message': 'Switched to Low-Fatigue Profile'}
+
+        if any(w in text for w in ['profile sterile', 'sterile mode', 'sterile environment']):
+            import config
+            config.apply_profile('STERILE_ENVIRONMENT')
+            return {'status': 'success', 'message': 'Switched to Sterile Environment Profile'}
+
+        if any(w in text for w in ['profile default', 'default mode', 'reset profile', 'standard mode']):
+            import config
+            config.apply_profile('DEFAULT')
+            return {'status': 'success', 'message': 'Switched to Default Profile'}
+
         print(f"  ⚠️ [NO MATCH]: '{text}' did not match any predefined voice command.")
         return {'status': 'unrecognized', 'message': ''}
