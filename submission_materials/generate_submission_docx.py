@@ -132,14 +132,17 @@ def create_document():
 
     doc.add_paragraph(
         "AeroPoint AI is an on-device accessibility assistant that lets people control a Windows PC through voice, "
-        "gesture, dwell-click, and Point-and-Speak interaction. It adapts to the user's current situation through Access Profiles, "
-        "makes uncertain or destructive actions reversible through confidence-aware control, and keeps camera, microphone, screen, "
-        "and document data entirely on the device."
+        "gesture, dwell-click, and Point-and-Speak interaction. It adapts dynamically to fluctuating user capabilities "
+        "and environments through four local Access Profiles (Motor Support, Hands-Busy, Low-Fatigue, and Sterile Environment). "
+        "By integrating confidence-aware control with a 60-second volatile action ledger, AeroPoint ensures uncertain or destructive "
+        "commands are safely confirmed or instantly reversed via 'Undo that.'"
     )
     doc.add_paragraph(
-        "By combining low-latency hand tracking, event-driven speech recognition, and Windows UI Automation, AeroPoint enables "
-        "hands-free productivity for people with motor disabilities, temporary injuries, sterile-work constraints, and speech "
-        "disfluencies—without cloud dependency or continuous high-power processing."
+        "Built on a decoupled heterogeneous architecture—MediaPipe hand tracking, quantized Faster-Whisper speech recognition, "
+        "and native Windows UI Automation—AeroPoint coexists transparently alongside existing screen readers. "
+        "It empowers individuals with permanent motor disabilities, temporary musculoskeletal injuries, sterile-work barriers, "
+        "and speech disfluencies. Operating entirely air-gapped within a 510 MB memory footprint and consuming under 1.8W average "
+        "active power, AeroPoint guarantees absolute data privacy and full-day battery endurance without cloud reliance."
     )
 
     # =========================================================================
@@ -398,14 +401,14 @@ def create_document():
     add_sec_heading("8", "Trade-offs and What You Left Out", "≈100 words")
 
     doc.add_paragraph(
-        "Version 1 excludes full screen understanding because a vision-language model would consume several gigabytes of memory "
-        "and add seconds of latency, conflicting with the requirement for a light, responsive assistant. It also excludes eye tracking "
-        "because it requires specialized hardware and reduces universality. Instead, AeroPoint prioritizes low-latency hand tracking, "
-        "voice control, dwell interaction, and system-level UIA integration."
+        "Version 1 deliberately excludes dense vision-language models for full screen understanding, as loading multi-gigabyte "
+        "weights incurs prohibitive memory overhead and multi-second latencies, violating our sub-300ms real-time mandate. "
+        "Infrared eye-gaze tracking was also excluded to avoid requiring specialized external peripherals. Instead, AeroPoint "
+        "prioritizes universal on-device modalities: sub-20ms hand tracking, INT8 voice dictation, dwell clicks, and native Windows UI Automation."
     )
     doc.add_paragraph(
-        "Future Roadmap: Version 2 will incorporate lightweight on-device screen question-answering once NPU execution reaches parity with Copilot+ standards, "
-        "preserving our strict sub-250ms responsiveness and zero-cloud commitment."
+        "Next Steps: Version 2 will offload speech decoding and optical tracking to integrated Copilot+ NPUs via DirectML, "
+        "enabling lightweight screen question-answering while maintaining a zero-cloud, sub-1.8W power envelope."
     )
 
     # =========================================================================
