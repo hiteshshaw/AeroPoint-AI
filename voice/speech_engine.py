@@ -32,6 +32,10 @@ class VoiceIntentEngine:
         self.last_prefix = ""
         self.last_prefix_time = 0
 
+        # Safety: Volatile Action Ledger (60s in-memory rolling undo stack)
+        self.action_ledger = []
+        self.pending_confirmation = None
+
         self.apps = {
             'notepad': 'notepad.exe',
             'calculator': 'calc.exe',
@@ -47,12 +51,49 @@ class VoiceIntentEngine:
             'settings': 'ms-settings:'
         }
 
+    def record_action(self, desc: str, undo_fn=None):
+        now = time.time()
+        self.action_ledger = [a for a in self.action_ledger if now - a['time'] <= 60.0]
+        self.action_ledger.append({'time': now, 'desc': desc, 'undo_fn': undo_fn})
+
     def execute_command(self, text: str) -> Dict[str, str]:
         text = text.lower().strip()
         if not text:
             return {'status': 'ignored', 'message': ''}
 
         now = time.time()
+
+        # Confidence-Aware Confirmation Gate for Destructive Actions
+        if self.pending_confirmation:
+            if any(w in text for w in ['yes', 'confirm', 'proceed', 'do it', 'sure']):
+                cmd = self.pending_confirmation['cmd']
+                desc = self.pending_confirmation['desc']
+                self.pending_confirmation = None
+                print(f"  🛡️ [SAFETY CONFIRMED]: Executing confirmed action '{desc}'...")
+                if cmd == 'close_window':
+                    if pyautogui:
+                        pyautogui.hotkey('alt', 'f4')
+                    return {'status': 'success', 'message': 'Confirmed & closed window'}
+            elif any(w in text for w in ['no', 'cancel', 'abort', 'stop', 'dont']):
+                self.pending_confirmation = None
+                print("  🛡️ [SAFETY CANCELLED]: Destructive action aborted by user.")
+                return {'status': 'success', 'message': 'Action cancelled'}
+
+        # Volatile Action Ledger: "Undo that" (Reverts mutations within 60s)
+        if any(w in text for w in ['undo that', 'undo last', 'undo', 'scratch that', 'cancel that']):
+            self.action_ledger = [a for a in self.action_ledger if now - a['time'] <= 60.0]
+            if self.action_ledger:
+                last_action = self.action_ledger.pop()
+                print(f"  ↩️ [UNDO-FIRST LEDGER]: Reverting '{last_action['desc']}'...")
+                if last_action.get('undo_fn'):
+                    last_action['undo_fn']()
+                elif pyautogui:
+                    pyautogui.hotkey('ctrl', 'z')
+                return {'status': 'success', 'message': f"Undid: {last_action['desc']}"}
+            else:
+                if pyautogui:
+                    pyautogui.hotkey('ctrl', 'z')
+                return {'status': 'success', 'message': 'Executed Undo (Ctrl+Z)'}
 
         # Contextual Join: If previous word was "open" or "type" within 3 seconds
         if self.last_prefix and (now - self.last_prefix_time) < 3.0:
@@ -250,6 +291,12 @@ class VoiceIntentEngine:
                 return {'status': 'success', 'message': 'Showing Desktop'}
 
             if 'close window' in text:
+                import config
+                profile_cfg = config.ACCESS_PROFILES.get(getattr(config, 'ACTIVE_PROFILE', 'DEFAULT'), {})
+                if profile_cfg.get('VERBAL_CONFIRMATION', False):
+                    self.pending_confirmation = {'cmd': 'close_window', 'desc': 'Close active window', 'time': now}
+                    print("  🛡️ [SAFETY GATE]: Destructive command detected! Say 'Yes' to confirm or 'No' to cancel...")
+                    return {'status': 'waiting', 'message': 'Confirm close window? Say Yes or No'}
                 print("  -> Executing: Closing Window...")
                 pyautogui.hotkey('alt', 'f4')
                 return {'status': 'success', 'message': 'Closed window'}

@@ -9,7 +9,7 @@ import numpy as np
 import sounddevice as sd
 from faster_whisper import WhisperModel
 
-COMMAND_PROMPT = "Open YouTube, Open Google, Open Chrome, Open Notepad, Open Calculator, Open Settings, Type, Write, Enter, Backspace, Save, Mute, Volume Up, Volume Down, Volume Full, Play, Pause, Next, Previous, Screenshot, Desktop, Close Window, Lock."
+COMMAND_PROMPT = "Open YouTube, Open Google, Open Chrome, Open Notepad, Open Calculator, Open Settings, Type something, Write, Enter, Backspace, Save, Mute, Volume Up, Volume Down, Screenshot, Desktop, Close Window, Lock, Click, Double Click, Right Click, Drag, Drop, Scroll Down, Scroll Up, Undo that, Scratch that, Yes, No, Cancel, Profile Motor Support, Profile Hands Busy, Profile Sterile, Profile Default."
 
 
 def get_active_microphone():
